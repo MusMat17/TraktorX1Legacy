@@ -1,0 +1,47 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+env:
+  CARGO_TERM_COLOR: always
+  MACOSX_DEPLOYMENT_TARGET: "12.0"
+
+jobs:
+  release-macos-intel:
+    runs-on: macos-15-intel
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-apple-darwin
+
+      - name: Install libusb
+        run: brew install libusb || brew upgrade libusb || true
+
+      - name: Build
+        run: chmod +x bundle.sh && ./bundle.sh x86_64-apple-darwin
+
+      - name: Verify deployment target
+        run: |
+          BIN="target/x86_64-apple-darwin/release/bundle/osx/TraktorX1Legacy.app/Contents/MacOS/traktor-x1-legacy"
+          file "$BIN" | grep -q "x86_64"
+          vtool -show-build "$BIN" | grep -Eq "minos[[:space:]]+12(\.0)?"
+
+      - name: Fetch mapping
+        run: |
+          curl -fL https://github.com/Opa-/x1-mk1-usb2midi/releases/download/1.3.3/DecksAB.tsi -o dist/DecksAB-upstream-1.3.3.tsi
+          echo "9c161b232ca900aec307b3cad397ffb49a2ed14231cb829ed0085318d86ce8b6  dist/DecksAB-upstream-1.3.3.tsi" | shasum -a 256 -c -
+
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/*.zip
+            dist/*.tsi
