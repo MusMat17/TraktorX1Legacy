@@ -1,0 +1,66 @@
+name: Build
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  CARGO_TERM_COLOR: always
+  MACOSX_DEPLOYMENT_TARGET: "12.0"
+
+jobs:
+  macos-intel-monterey:
+    name: Intel app (macOS 12+)
+    runs-on: macos-15-intel
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-apple-darwin
+          components: rustfmt
+
+      - name: Install libusb
+        run: brew install libusb || brew upgrade libusb || true
+
+      - name: Format check
+        run: cargo fmt --all -- --check
+
+      - name: Unit tests
+        run: cargo test --target x86_64-apple-darwin
+
+      - name: Build app bundle
+        run: chmod +x bundle.sh && ./bundle.sh x86_64-apple-darwin
+
+      - name: Verify architecture and deployment target
+        shell: bash
+        run: |
+          set -euo pipefail
+          BIN="target/x86_64-apple-darwin/release/bundle/osx/TraktorX1Legacy.app/Contents/MacOS/traktor-x1-legacy"
+          file "$BIN"
+          file "$BIN" | grep -q "x86_64"
+          vtool -show-build "$BIN"
+          vtool -show-build "$BIN" | grep -Eq "minos[[:space:]]+12(\.0)?"
+
+      - name: Fetch upstream-compatible Traktor mapping
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fL             https://github.com/Opa-/x1-mk1-usb2midi/releases/download/1.3.3/DecksAB.tsi             -o dist/DecksAB-upstream-1.3.3.tsi
+          echo "9c161b232ca900aec307b3cad397ffb49a2ed14231cb829ed0085318d86ce8b6  dist/DecksAB-upstream-1.3.3.tsi" | shasum -a 256 -c -
+
+      - name: Upload test build
+        uses: actions/upload-artifact@v4
+        with:
+          name: TraktorX1Legacy-macOS12-intel
+          path: |
+            dist/*.zip
+            dist/*.tsi
+          if-no-files-found: error
