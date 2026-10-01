@@ -85,8 +85,7 @@ impl<T: UsbContext> X1mk1<T> {
     }
 
     fn init_midi_input(&mut self, sender: mpsc::Sender<Vec<u8>>) -> Result<(), String> {
-        let midi_in =
-            MidiInput::new("TraktorX1Legacy").map_err(|e| format!("MIDI input: {e}"))?;
+        let midi_in = MidiInput::new("TraktorX1Legacy").map_err(|e| format!("MIDI input: {e}"))?;
         let midi_conn_in = midi_in
             .create_virtual(
                 self.serial_number.as_str(),
@@ -175,10 +174,8 @@ impl<T: UsbContext> X1mk1<T> {
         self.handle
             .set_active_configuration(self.usb_endpoint.config)?;
         self.handle.claim_interface(self.usb_endpoint.interface)?;
-        self.handle.set_alternate_setting(
-            self.usb_endpoint.interface,
-            self.usb_endpoint.setting,
-        )?;
+        self.handle
+            .set_alternate_setting(self.usb_endpoint.interface, self.usb_endpoint.setting)?;
         Ok(())
     }
 
@@ -273,8 +270,7 @@ impl<T: UsbContext> X1mk1<T> {
                     button.prev = button.curr;
                 }
                 ButtonType::Knob(knob) => {
-                    knob.curr =
-                        knob_to_midi(buf[knob.read_i as usize], buf[knob.read_j as usize]);
+                    knob.curr = knob_to_midi(buf[knob.read_i as usize], buf[knob.read_j as usize]);
                     if knob.curr != knob.prev {
                         let _ = self.midi_conn_out.send(&[
                             MIDI_CHANNEL + self.shift,
