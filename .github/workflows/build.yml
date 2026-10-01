@@ -12,6 +12,8 @@ permissions:
 env:
   CARGO_TERM_COLOR: always
   MACOSX_DEPLOYMENT_TARGET: "12.0"
+  LIBUSB_VERSION: "1.0.30"
+  LIBUSB_SHA256: "fea36f34f9156400209595e300840767ab1a385ede1dc7ee893015aea9c6dbaf"
 
 jobs:
   macos-intel-monterey:
@@ -27,8 +29,31 @@ jobs:
           targets: x86_64-apple-darwin
           components: rustfmt
 
-      - name: Install libusb
-        run: brew install libusb || brew upgrade libusb || true
+      - name: Build libusb for macOS 12
+        shell: bash
+        run: |
+          set -euo pipefail
+          brew install pkg-config || true
+          PREFIX="$RUNNER_TEMP/libusb-macos12"
+          ARCHIVE="$RUNNER_TEMP/libusb-${LIBUSB_VERSION}.tar.bz2"
+          curl -fL             "https://github.com/libusb/libusb/releases/download/v${LIBUSB_VERSION}/libusb-${LIBUSB_VERSION}.tar.bz2"             -o "$ARCHIVE"
+          echo "${LIBUSB_SHA256}  $ARCHIVE" | shasum -a 256 -c -
+          tar -xjf "$ARCHIVE" -C "$RUNNER_TEMP"
+          cd "$RUNNER_TEMP/libusb-${LIBUSB_VERSION}"
+          MACOSX_DEPLOYMENT_TARGET="$MACOSX_DEPLOYMENT_TARGET"             ./configure --prefix="$PREFIX" --disable-static --enable-shared
+          make -j3
+          make install
+          echo "PKG_CONFIG_PATH=$PREFIX/lib/pkgconfig" >> "$GITHUB_ENV"
+          echo "LIBUSB_PREFIX=$PREFIX" >> "$GITHUB_ENV"
+
+      - name: Verify libusb deployment target
+        shell: bash
+        run: |
+          set -euo pipefail
+          LIB="$LIBUSB_PREFIX/lib/libusb-1.0.0.dylib"
+          file "$LIB"
+          vtool -show-build "$LIB"
+          vtool -show-build "$LIB" | grep -Eq "minos[[:space:]]+12(\.0)?"
 
       - name: Format check
         run: cargo fmt --all -- --check
@@ -39,15 +64,24 @@ jobs:
       - name: Build app bundle
         run: chmod +x bundle.sh && ./bundle.sh x86_64-apple-darwin
 
-      - name: Verify architecture and deployment target
+      - name: Verify packaged app
         shell: bash
         run: |
           set -euo pipefail
-          BIN="target/x86_64-apple-darwin/release/bundle/osx/TraktorX1Legacy.app/Contents/MacOS/traktor-x1-legacy"
+          APP="target/x86_64-apple-darwin/release/bundle/osx/TraktorX1Legacy.app"
+          BIN="$APP/Contents/MacOS/traktor-x1-legacy"
+          LIB="$(find "$APP/Contents/MacOS" -maxdepth 1 -name 'libusb*.dylib' -type f -print -quit)"
+          test -n "$LIB"
           file "$BIN"
           file "$BIN" | grep -q "x86_64"
           vtool -show-build "$BIN"
           vtool -show-build "$BIN" | grep -Eq "minos[[:space:]]+12(\.0)?"
+          vtool -show-build "$LIB"
+          vtool -show-build "$LIB" | grep -Eq "minos[[:space:]]+12(\.0)?"
+          otool -L "$BIN"
+          otool -L "$BIN" | grep -q "@executable_path/"
+          codesign --verify --deep --strict "$APP"
+          plutil -lint "$APP/Contents/Info.plist"
 
       - name: Fetch upstream-compatible Traktor mapping
         shell: bash
