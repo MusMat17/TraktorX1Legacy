@@ -138,8 +138,8 @@ fn run_bridge(sender_menu_bar: Sender<HashMap<String, bool>>) -> Result<(), Stri
                     }
                 };
 
-                let serial_number =
-                    get_serial_number(&device, &handle).unwrap_or_else(|| fallback_device_name(&device));
+                let serial_number = get_serial_number(&device, &handle)
+                    .unwrap_or_else(|| fallback_device_name(&device));
 
                 {
                     let mut state = devices.lock().expect("device state mutex poisoned");
@@ -156,13 +156,8 @@ fn run_bridge(sender_menu_bar: Sender<HashMap<String, bool>>) -> Result<(), Stri
                 let yaml_config = yaml_config.clone();
 
                 thread::spawn(move || {
-                    let result = X1mk1::new(
-                        device,
-                        handle,
-                        serial_number.clone(),
-                        yaml_config,
-                    )
-                    .and_then(|mut x1| x1.run());
+                    let result = X1mk1::new(device, handle, serial_number.clone(), yaml_config)
+                        .and_then(|mut x1| x1.run());
 
                     if let Err(err) = result {
                         eprintln!("[bridge] {serial_number}: {err}");
@@ -213,8 +208,9 @@ fn diagnose() -> Result<(), String> {
 
         found += 1;
         let serial = match device.open() {
-            Ok(handle) => get_serial_number(&device, &handle)
-                .unwrap_or_else(|| fallback_device_name(&device)),
+            Ok(handle) => {
+                get_serial_number(&device, &handle).unwrap_or_else(|| fallback_device_name(&device))
+            }
             Err(_) => fallback_device_name(&device),
         };
 
