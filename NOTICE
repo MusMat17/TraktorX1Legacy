@@ -1,0 +1,13 @@
+TraktorX1Legacy
+
+This project contains modified portions of Opa-/x1-mk1-usb2midi,
+licensed under the Apache License, Version 2.0.
+
+Original implementation:
+https://github.com/Opa-/x1-mk1-usb2midi
+
+USB protocol research referenced by the original project:
+https://github.com/joherold/traktor_x1
+
+Modifications in this repository focus on Intel x86_64 / macOS Monterey
+compatibility, robustness, diagnostics, packaging, and Traktor Pro 4 use.
