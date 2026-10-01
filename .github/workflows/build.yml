@@ -83,12 +83,16 @@ jobs:
           codesign --verify --deep --strict "$APP"
           plutil -lint "$APP/Contents/Info.plist"
 
-      - name: Fetch upstream-compatible Traktor mapping
+      - name: Prepare companion files
         shell: bash
         run: |
           set -euo pipefail
-          curl -fL             https://github.com/Opa-/x1-mk1-usb2midi/releases/download/1.3.3/DecksAB.tsi             -o dist/DecksAB-upstream-1.3.3.tsi
+          curl -fL \
+            https://github.com/Opa-/x1-mk1-usb2midi/releases/download/1.3.3/DecksAB.tsi \
+            -o dist/DecksAB-upstream-1.3.3.tsi
           echo "9c161b232ca900aec307b3cad397ffb49a2ed14231cb829ed0085318d86ce8b6  dist/DecksAB-upstream-1.3.3.tsi" | shasum -a 256 -c -
+          cp "$RUNNER_TEMP/libusb-${LIBUSB_VERSION}.tar.bz2" "dist/libusb-${LIBUSB_VERSION}.tar.bz2"
+          cp docs/INSTALL.md dist/INSTALL.md
 
       - name: Upload test build
         uses: actions/upload-artifact@v4
@@ -97,4 +101,6 @@ jobs:
           path: |
             dist/*.zip
             dist/*.tsi
+            dist/*.tar.bz2
+            dist/INSTALL.md
           if-no-files-found: error

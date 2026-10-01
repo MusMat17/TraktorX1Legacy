@@ -19,9 +19,13 @@ echo "Building ${APP_NAME} ${VERSION} for ${BUILD_TARGET}, macOS ${MIN_MACOS}+"
 cargo build --release --target="${BUILD_TARGET}"
 
 rm -rf "${APP_BUNDLE_PATH}"
-mkdir -p "${MACOS_DIR}" "${RESOURCES_DIR}"
+mkdir -p "${MACOS_DIR}" "${RESOURCES_DIR}/licenses"
 cp "target/${BUILD_TARGET}/release/${BINARY_NAME}" "${BIN_PATH}"
 cp board.yml "${RESOURCES_DIR}/board.yml"
+cp LICENSE "${RESOURCES_DIR}/licenses/Apache-2.0.txt"
+cp NOTICE "${RESOURCES_DIR}/licenses/NOTICE.txt"
+cp third_party/libusb-LICENSE.txt "${RESOURCES_DIR}/licenses/libusb-LGPL-2.1.txt"
+cp third_party/README.md "${RESOURCES_DIR}/licenses/THIRD_PARTY_NOTICES.md"
 
 cat > "${CONTENTS}/Info.plist" <<PLIST
 <?xml version="1.0" encoding="UTF-8"?>
