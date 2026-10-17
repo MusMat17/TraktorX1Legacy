@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.1.1 — 2026-10-17
+
+- Rebuilt the macOS app icon with sharp vector geometry, without Gaussian blur filters.
+- Retained the X1 / orange circular arc / small LP design.
+- Bumped CFBundleVersion to refresh macOS icon caches.
+
+
 ## v0.1.0 — 2026-10-17
 
 First hardware-validated release.
