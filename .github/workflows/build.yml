@@ -61,6 +61,9 @@ jobs:
       - name: Unit tests
         run: cargo test --target x86_64-apple-darwin
 
+      - name: Install icon renderer
+        run: brew install librsvg
+
       - name: Build app bundle
         run: chmod +x bundle.sh && ./bundle.sh x86_64-apple-darwin
 
@@ -82,6 +85,9 @@ jobs:
           otool -L "$BIN" | grep -q "@executable_path/"
           codesign --verify --deep --strict "$APP"
           plutil -lint "$APP/Contents/Info.plist"
+          test -s "$APP/Contents/Resources/AppIcon.icns"
+          iconutil -c iconset "$APP/Contents/Resources/AppIcon.icns" -o "$RUNNER_TEMP/verified-icon.iconset"
+          test -s "$RUNNER_TEMP/verified-icon.iconset/icon_512x512@2x.png"
 
       - name: Prepare companion files
         shell: bash

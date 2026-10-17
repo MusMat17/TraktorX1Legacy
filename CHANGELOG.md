@@ -6,6 +6,8 @@ First hardware-validated release.
 
 ### Added
 
+- Monterey-style X1 / LP app icon, integrated into Finder and Dock
+
 - userspace USB-to-CoreMIDI bridge for Traktor Kontrol X1 Mk1
 - Intel x86_64 macOS application bundle
 - macOS 12.0 deployment target validation

@@ -22,6 +22,7 @@ rm -rf "${APP_BUNDLE_PATH}"
 mkdir -p "${MACOS_DIR}" "${RESOURCES_DIR}/licenses"
 cp "target/${BUILD_TARGET}/release/${BINARY_NAME}" "${BIN_PATH}"
 cp board.yml "${RESOURCES_DIR}/board.yml"
+bash scripts/generate-icon.sh "${RESOURCES_DIR}/AppIcon.icns"
 cp LICENSE "${RESOURCES_DIR}/licenses/Apache-2.0.txt"
 cp NOTICE "${RESOURCES_DIR}/licenses/NOTICE.txt"
 cp third_party/libusb-LICENSE.txt "${RESOURCES_DIR}/licenses/libusb-LGPL-2.1.txt"
@@ -40,6 +41,8 @@ cat > "${CONTENTS}/Info.plist" <<PLIST
   <string>io.github.musmat17.traktorx1legacy</string>
   <key>CFBundleInfoDictionaryVersion</key>
   <string>6.0</string>
+  <key>CFBundleIconFile</key>
+  <string>AppIcon.icns</string>
   <key>CFBundleName</key>
   <string>${APP_NAME}</string>
   <key>CFBundleDisplayName</key>

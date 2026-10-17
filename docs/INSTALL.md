@@ -8,7 +8,7 @@ TraktorX1Legacy v0.1.0 targets **Intel x86_64 / macOS 12 Monterey or newer**.
 2. Unzip `TraktorX1Legacy_x86_64-apple-darwin_macos12.0+.zip`.
 3. Copy `TraktorX1Legacy.app` to `/Applications`.
 4. Connect the Traktor Kontrol X1 Mk1 by USB.
-5. Open `TraktorX1Legacy.app`.
+5. Open `TraktorX1Legacy.app`. The X1/LP icon appears in Finder and Launchpad.
 
 The first launch may require Finder's **Open** command or approval in **System Preferences -> Security & Privacy -> General** because the build is ad-hoc signed.
 

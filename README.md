@@ -34,6 +34,10 @@ Validated on real hardware:
 
 The six FX 1/2/3 buttons use momentary press/release semantics so the built-in Traktor X1 profile handles them correctly.
 
+## macOS application icon
+
+The Monterey-style X1/LP app icon is embedded as `Contents/Resources/AppIcon.icns` and declared in `CFBundleIconFile`. Editable artwork is kept in [`assets/AppIcon.svg`](assets/AppIcon.svg). It is converted using `scripts/generate-icon.sh` during the macOS CI build.
+
 ## Install
 
 See [docs/INSTALL.md](docs/INSTALL.md).
