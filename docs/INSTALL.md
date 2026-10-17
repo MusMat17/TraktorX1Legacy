@@ -1,17 +1,37 @@
-# Installation and first test
+# Installation
 
-This build targets **Intel x86_64 / macOS 12 Monterey or newer**.
+TraktorX1Legacy v0.1.0 targets **Intel x86_64 / macOS 12 Monterey or newer**.
 
-## Install
+## Install the app
 
-1. Unzip the CI artifact.
-2. Copy `TraktorX1Legacy.app` to `/Applications`.
-3. Connect the Traktor Kontrol X1 Mk1.
-4. Open the app. The first launch may require Finder's **Open** command or approval in Privacy & Security because development builds are ad-hoc signed.
-5. Import `DecksAB-upstream-1.3.3.tsi` in Traktor Controller Manager.
-6. Select the virtual MIDI port named after the X1 serial number as both **In-Port** and **Out-Port**.
+1. Unzip the release archive.
+2. Unzip `TraktorX1Legacy_x86_64-apple-darwin_macos12.0+.zip`.
+3. Copy `TraktorX1Legacy.app` to `/Applications`.
+4. Connect the Traktor Kontrol X1 Mk1 by USB.
+5. Open `TraktorX1Legacy.app`.
 
-Do not install the obsolete Native Instruments X1 Mk1 kernel extension for this bridge.
+The first launch may require Finder's **Open** command or approval in **System Preferences -> Security & Privacy -> General** because the build is ad-hoc signed.
+
+If Gatekeeper still blocks the app:
+
+```sh
+xattr -dr com.apple.quarantine /Applications/TraktorX1Legacy.app
+open /Applications/TraktorX1Legacy.app
+```
+
+## Traktor Pro 4
+
+No custom TSI is required for normal operation.
+
+In **Preferences -> Controller Manager**, use the built-in profile:
+
+- Device: **TraktorKontrol X1**
+- In-Port: **KontrolX1**
+- Out-Port: **KontrolX1**
+
+The tested v0.1.0 bridge provides working controls and full LED feedback through this built-in profile.
+
+Do **not** install the obsolete Native Instruments X1 Mk1 kernel extension for this bridge.
 
 ## Diagnose
 
@@ -30,7 +50,7 @@ The app itself also supports:
 
 ## Optional autostart
 
-After the app works manually:
+After confirming that the app works manually:
 
 ```sh
 chmod +x scripts/install-launchagent.sh

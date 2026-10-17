@@ -2,46 +2,52 @@
 
 Userspace compatibility bridge for **Native Instruments Traktor Kontrol X1 Mk1** on modern macOS.
 
-## Target system
+## Tested target
 
 - Mac: **MacBookPro9,2** (13-inch, Mid 2012, Intel x86_64)
 - macOS: **Monterey 12.7.x** installed via OpenCore Legacy Patcher
-- DJ software: **Traktor Pro 4** (Monterey-compatible release)
+- DJ software: **Traktor Pro 4**
 - Controller: **Traktor Kontrol X1 Mk1**
 
-## Goal
-
-Restore practical X1 Mk1 support without loading Native Instruments' obsolete kernel extension:
+## What it does
 
 ```
 X1 Mk1 USB -> userspace USB bridge -> CoreMIDI virtual ports -> Traktor Pro
                                       <- LED feedback <-
 ```
 
-Planned v0.1 scope:
+The bridge restores practical X1 Mk1 support without loading the obsolete Native Instruments kernel extension.
 
-- Intel x86_64 build for macOS 12
-- hot-plug/reconnect
+## v0.1.0 status
+
+Validated on real hardware:
+
+- Intel x86_64 / macOS 12+
+- hot-plug and reconnect
 - buttons, encoders and knobs
 - SHIFT and HOTCUE layers
-- LED feedback
-- Traktor mapping
-- diagnostics and install/run helpers
-- no SIP disable and no legacy NI kext
+- full LED feedback
+- built-in Traktor device profile: **TraktorKontrol X1**
+- In-Port / Out-Port: **KontrolX1**
+- no custom TSI required for normal operation
+- no SIP disable and no legacy NI kext required by TraktorX1Legacy
+
+The six FX 1/2/3 buttons use momentary press/release semantics so the built-in Traktor X1 profile handles them correctly.
+
+## Install
+
+See [docs/INSTALL.md](docs/INSTALL.md).
 
 ## Development
 
-Stable documentation lives on `main`. Active development is done on `dev` until a tested build is ready.
+- `main`: released/stable code
+- `dev`: active development
 
 ## Upstream
 
-This project is based in part on the protocol work and implementation from:
+This project is based in part on protocol work and implementation from:
 
 - Opa-/x1-mk1-usb2midi
 - joherold/traktor_x1
 
 The upstream x1-mk1-usb2midi project is licensed under Apache License 2.0. Any reused or modified upstream source retains its original attribution and license terms.
-
-## Status
-
-Initial bring-up for MacBookPro9,2 / macOS Monterey / Traktor Pro 4.
