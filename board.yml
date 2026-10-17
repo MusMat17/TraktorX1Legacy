@@ -21,19 +21,19 @@ buttons:
     write_idx: 8
     midi_ctrl_ch: 8
   - name: "FX1_BUTTON_1"
-    type: "Toggle"
+    type: "Hold"
     read_i: 3
     read_j: 5
     write_idx: 7
     midi_ctrl_ch: 10
   - name: "FX1_BUTTON_2"
-    type: "Toggle"
+    type: "Hold"
     read_i: 3
     read_j: 6
     write_idx: 6
     midi_ctrl_ch: 12
   - name: "FX1_BUTTON_3"
-    type: "Toggle"
+    type: "Hold"
     read_i: 3
     read_j: 7
     write_idx: 5
@@ -66,19 +66,19 @@ buttons:
     write_idx: 4
     midi_ctrl_ch: 9
   - name: "FX2_BUTTON_1"
-    type: "Toggle"
+    type: "Hold"
     read_i: 4
     read_j: 1
     write_idx: 3
     midi_ctrl_ch: 11
   - name: "FX2_BUTTON_2"
-    type: "Toggle"
+    type: "Hold"
     read_i: 4
     read_j: 2
     write_idx: 2
     midi_ctrl_ch: 13
   - name: "FX2_BUTTON_3"
-    type: "Toggle"
+    type: "Hold"
     read_i: 4
     read_j: 3
     write_idx: 1
