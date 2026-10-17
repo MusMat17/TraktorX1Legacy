@@ -1,0 +1,23 @@
+[package]
+name = "traktor-x1-legacy"
+version = "0.1.0"
+edition = "2021"
+description = "Userspace USB-to-CoreMIDI bridge for Native Instruments Traktor Kontrol X1 Mk1"
+license = "Apache-2.0"
+repository = "https://github.com/MusMat17/TraktorX1Legacy"
+
+[dependencies]
+midir = "0.9.1"
+rusb = "0.9"
+serde = { version = "1.0", features = ["derive"] }
+serde_yaml = "0.9"
+
+[target.'cfg(target_os = "macos")'.dependencies]
+system_status_bar_macos = "0.1.3"
+
+[package.metadata.bundle]
+name = "TraktorX1Legacy"
+identifier = "io.github.musmat17.traktorx1legacy"
+category = "public.app-category.music"
+resources = ["board.yml"]
+copyright = "TraktorX1Legacy contributors"

@@ -1,0 +1,71 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+env:
+  CARGO_TERM_COLOR: always
+  MACOSX_DEPLOYMENT_TARGET: "12.0"
+  LIBUSB_VERSION: "1.0.30"
+  LIBUSB_SHA256: "fea36f34f9156400209595e300840767ab1a385ede1dc7ee893015aea9c6dbaf"
+
+jobs:
+  release-macos-intel:
+    runs-on: macos-15-intel
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-apple-darwin
+
+      - name: Build libusb for macOS 12
+        shell: bash
+        run: |
+          set -euo pipefail
+          brew install pkg-config || true
+          PREFIX="$RUNNER_TEMP/libusb-macos12"
+          ARCHIVE="$RUNNER_TEMP/libusb-${LIBUSB_VERSION}.tar.bz2"
+          curl -fL             "https://github.com/libusb/libusb/releases/download/v${LIBUSB_VERSION}/libusb-${LIBUSB_VERSION}.tar.bz2"             -o "$ARCHIVE"
+          echo "${LIBUSB_SHA256}  $ARCHIVE" | shasum -a 256 -c -
+          tar -xjf "$ARCHIVE" -C "$RUNNER_TEMP"
+          cd "$RUNNER_TEMP/libusb-${LIBUSB_VERSION}"
+          MACOSX_DEPLOYMENT_TARGET="$MACOSX_DEPLOYMENT_TARGET"             ./configure --prefix="$PREFIX" --disable-static --enable-shared
+          make -j3
+          make install
+          echo "PKG_CONFIG_PATH=$PREFIX/lib/pkgconfig" >> "$GITHUB_ENV"
+          echo "LIBUSB_PREFIX=$PREFIX" >> "$GITHUB_ENV"
+
+      - name: Build package
+        run: chmod +x bundle.sh && ./bundle.sh x86_64-apple-darwin
+
+      - name: Verify package
+        shell: bash
+        run: |
+          set -euo pipefail
+          APP="target/x86_64-apple-darwin/release/bundle/osx/TraktorX1Legacy.app"
+          BIN="$APP/Contents/MacOS/traktor-x1-legacy"
+          LIB="$(find "$APP/Contents/MacOS" -maxdepth 1 -name 'libusb*.dylib' -type f -print -quit)"
+          file "$BIN" | grep -q "x86_64"
+          vtool -show-build "$BIN" | grep -Eq "minos[[:space:]]+12(\.0)?"
+          vtool -show-build "$LIB" | grep -Eq "minos[[:space:]]+12(\.0)?"
+          codesign --verify --deep --strict "$APP"
+
+      - name: Prepare companion files
+        run: |
+          cp "$RUNNER_TEMP/libusb-${LIBUSB_VERSION}.tar.bz2" "dist/libusb-${LIBUSB_VERSION}.tar.bz2"
+          cp docs/INSTALL.md dist/INSTALL.md
+
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          files: |
+            dist/*.zip
+            dist/*.tar.bz2
+            dist/INSTALL.md
