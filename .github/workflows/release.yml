@@ -17,7 +17,7 @@ env:
 
 jobs:
   release-macos-intel:
-    if: ${{ startsWith(github.ref, 'refs/tags/') || (github.ref == 'refs/heads/main' && contains(github.event.head_commit.message, 'release: add icon')) }}
+    if: "${{ startsWith(github.ref, 'refs/tags/') || (github.ref == 'refs/heads/main' && contains(github.event.head_commit.message, 'release: add icon')) }}"
     runs-on: macos-15-intel
     steps:
       - uses: actions/checkout@v4
