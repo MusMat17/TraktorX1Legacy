@@ -1,0 +1,38 @@
+name: Publish v0.1.2 release description
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "docs/releases/v0.1.2.md"
+      - ".github/workflows/publish-v012-notes.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update-release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Update release description and mark latest stable
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh release edit v0.1.2 \
+            --repo "$GITHUB_REPOSITORY" \
+            --title "TraktorX1Legacy v0.1.2 — Stable" \
+            --notes-file docs/releases/v0.1.2.md \
+            --latest
+      - name: Confirm release state
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh api "repos/$GITHUB_REPOSITORY/releases/tags/v0.1.2" \
+            --jq '{name, tag_name, draft, prerelease, body_length:(.body|length)}'
+          test "$(gh api "repos/$GITHUB_REPOSITORY/releases/tags/v0.1.2" --jq '.draft')" = false
+          test "$(gh api "repos/$GITHUB_REPOSITORY/releases/tags/v0.1.2" --jq '.prerelease')" = false
+          test "$(gh api "repos/$GITHUB_REPOSITORY/releases/tags/v0.1.2" --jq '.body|contains("SHA-256 ZIP")')" = true
