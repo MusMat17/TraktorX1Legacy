@@ -89,6 +89,23 @@ jobs:
           iconutil -c iconset "$APP/Contents/Resources/AppIcon.icns" -o "$RUNNER_TEMP/verified-icon.iconset"
           test -s "$RUNNER_TEMP/verified-icon.iconset/icon_512x512@2x.png"
 
+      - name: Verify ZIP round-trip and executable launch
+        shell: bash
+        run: |
+          set -euo pipefail
+          Z="dist/TraktorX1Legacy_x86_64-apple-darwin_macos12.0+.zip"
+          test -s "$Z"
+          mkdir -p "$RUNNER_TEMP/reinstall"
+          ditto -x -k "$Z" "$RUNNER_TEMP/reinstall"
+          APP="$RUNNER_TEMP/reinstall/TraktorX1Legacy.app"
+          BIN="$APP/Contents/MacOS/traktor-x1-legacy"
+          test -x "$BIN"
+          codesign --verify --deep --strict --verbose=2 "$APP"
+          test -s "$APP/Contents/Resources/AppIcon.icns"
+          /usr/libexec/PlistBuddy -c 'Print :CFBundleIconFile' "$APP/Contents/Info.plist" | grep -qx 'AppIcon.icns'
+          "$BIN" --version
+          "$BIN" --diagnose
+
       - name: Prepare companion files
         shell: bash
         run: |
