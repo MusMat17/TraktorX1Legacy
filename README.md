@@ -1,6 +1,6 @@
 # TraktorX1 Legacy
 
-<img width="1536" height="1024" alt="image" src="https://github.com/user-attachments/assets/2ee3d29e-9972-4c69-891a-3d361d8fb5a4" />
+<img width="1536" height="1024" alt="image" src="https://github.com/user-attachments/assets/5e31121f-2f0c-448f-aadc-67c11da97557" />
 
 Userspace compatibility bridge for **Native Instruments Traktor Kontrol X1 Mk1** on modern macOS.
 
