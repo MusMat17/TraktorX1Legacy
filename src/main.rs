@@ -62,10 +62,7 @@ fn main() {
             }
         });
 
-        let status_item = RefCell::new(StatusItem::new(
-            "🎛️",
-            build_status_menu(&HashMap::new()),
-        ));
+        let status_item = RefCell::new(StatusItem::new("🎛️", build_status_menu(&HashMap::new())));
 
         sync_infinite_event_loop(receiver_menu_bar, move |x1| {
             status_item.borrow_mut().set_menu(build_status_menu(&x1));
