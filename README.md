@@ -1,4 +1,6 @@
-# TraktorX1Legacy
+# TraktorX1 Legacy
+
+<img width="1536" height="1024" alt="image" src="https://github.com/user-attachments/assets/2ee3d29e-9972-4c69-891a-3d361d8fb5a4" />
 
 Userspace compatibility bridge for **Native Instruments Traktor Kontrol X1 Mk1** on modern macOS.
 
@@ -18,8 +20,6 @@ X1 Mk1 USB -> userspace USB bridge -> CoreMIDI virtual ports -> Traktor Pro
 
 The bridge restores practical X1 Mk1 support without loading the obsolete Native Instruments kernel extension.
 
-## v0.1.0 status
-
 Validated on real hardware:
 
 - Intel x86_64 / macOS 12+
@@ -33,10 +33,6 @@ Validated on real hardware:
 - no SIP disable and no legacy NI kext required by TraktorX1Legacy
 
 The six FX 1/2/3 buttons use momentary press/release semantics so the built-in Traktor X1 profile handles them correctly.
-
-## macOS application icon
-
-The approved detailed X1/LP artwork is preserved in [`assets/AppIcon.webp`](assets/AppIcon.webp) (SHA-256 pinned), not redrawn as a simplified SVG. The macOS build generates `Contents/Resources/AppIcon-v012.icns` from that actual image.
 
 ## Menu bar
 
