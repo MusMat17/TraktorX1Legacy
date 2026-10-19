@@ -70,7 +70,6 @@ fn main() {
     }
 }
 
-
 #[cfg(target_os = "macos")]
 fn build_status_menu(devices: &HashMap<String, bool>) -> Menu {
     let mut entries: Vec<_> = devices.iter().collect();
