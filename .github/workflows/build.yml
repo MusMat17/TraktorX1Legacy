@@ -61,8 +61,8 @@ jobs:
       - name: Unit tests
         run: cargo test --target x86_64-apple-darwin
 
-      - name: Install icon renderer
-        run: brew install librsvg
+      - name: Install WebP decoder
+        run: brew install webp
 
       - name: Build app bundle
         run: chmod +x bundle.sh && ./bundle.sh x86_64-apple-darwin
@@ -85,9 +85,24 @@ jobs:
           otool -L "$BIN" | grep -q "@executable_path/"
           codesign --verify --deep --strict "$APP"
           plutil -lint "$APP/Contents/Info.plist"
-          test -s "$APP/Contents/Resources/AppIcon.icns"
-          iconutil -c iconset "$APP/Contents/Resources/AppIcon.icns" -o "$RUNNER_TEMP/verified-icon.iconset"
+          test -s "$APP/Contents/Resources/AppIcon-v012.icns"
+          iconutil -c iconset "$APP/Contents/Resources/AppIcon-v012.icns" -o "$RUNNER_TEMP/verified-icon.iconset"
           test -s "$RUNNER_TEMP/verified-icon.iconset/icon_512x512@2x.png"
+
+      - name: Smoke-test ZIP and executable
+        shell: bash
+        run: |
+          set -euo pipefail
+          ZIP="dist/TraktorX1Legacy_x86_64-apple-darwin_macos12.0+.zip"
+          mkdir -p "$RUNNER_TEMP/unpacked"
+          ditto -x -k "$ZIP" "$RUNNER_TEMP/unpacked"
+          APP="$RUNNER_TEMP/unpacked/TraktorX1Legacy.app"
+          BIN="$APP/Contents/MacOS/traktor-x1-legacy"
+          test -x "$BIN"
+          test -s "$APP/Contents/Resources/AppIcon-v012.icns"
+          codesign --verify --deep --strict "$APP"
+          "$BIN" --version | grep -F "TraktorX1Legacy 0.1.2"
+          "$BIN" --diagnose
 
       - name: Prepare companion files
         shell: bash

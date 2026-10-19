@@ -1,6 +1,6 @@
 [package]
 name = "traktor-x1-legacy"
-version = "0.1.1"
+version = "0.1.2"
 edition = "2021"
 description = "Userspace USB-to-CoreMIDI bridge for Native Instruments Traktor Kontrol X1 Mk1"
 license = "Apache-2.0"

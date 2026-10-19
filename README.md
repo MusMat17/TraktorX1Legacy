@@ -36,7 +36,11 @@ The six FX 1/2/3 buttons use momentary press/release semantics so the built-in T
 
 ## macOS application icon
 
-The Monterey-style X1/LP app icon is embedded as `Contents/Resources/AppIcon.icns` and declared in `CFBundleIconFile`. Editable artwork is kept in [`assets/AppIcon.svg`](assets/AppIcon.svg). It is converted using `scripts/generate-icon.sh` during the macOS CI build.
+The approved detailed X1/LP artwork is preserved in [`assets/AppIcon.webp`](assets/AppIcon.webp) (SHA-256 pinned), not redrawn as a simplified SVG. The macOS build generates `Contents/Resources/AppIcon-v012.icns` from that actual image.
+
+## Menu bar
+
+Click the 🎛️ icon and choose **Quit TraktorX1Legacy** to close the background bridge. Quit remains available after USB disconnect/reconnect.
 
 ## Install
 

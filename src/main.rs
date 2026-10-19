@@ -62,37 +62,44 @@ fn main() {
             }
         });
 
-        let status_item = RefCell::new(StatusItem::new(
-            "🎛️",
-            Menu::new(vec![MenuItem::new(
-                "Waiting for X1 Mk1…".to_string(),
-                None,
-                None,
-            )]),
-        ));
+        let status_item = RefCell::new(StatusItem::new("🎛️", build_status_menu(&HashMap::new())));
 
         sync_infinite_event_loop(receiver_menu_bar, move |x1| {
-            let mut entries: Vec<_> = x1.iter().collect();
-            entries.sort_by(|a, b| a.0.cmp(b.0));
-
-            let items = if entries.is_empty() {
-                vec![MenuItem::new("Waiting for X1 Mk1…".to_string(), None, None)]
-            } else {
-                entries
-                    .into_iter()
-                    .map(|(name, connected)| {
-                        MenuItem::new(
-                            format!("{} {}", if *connected { "🟢" } else { "🔴" }, name),
-                            None,
-                            None,
-                        )
-                    })
-                    .collect()
-            };
-
-            status_item.borrow_mut().set_menu(Menu::new(items));
+            status_item.borrow_mut().set_menu(build_status_menu(&x1));
         });
     }
+}
+
+#[cfg(target_os = "macos")]
+fn build_status_menu(devices: &HashMap<String, bool>) -> Menu {
+    let mut entries: Vec<_> = devices.iter().collect();
+    entries.sort_by(|a, b| a.0.cmp(b.0));
+
+    let mut items: Vec<MenuItem> = if entries.is_empty() {
+        vec![MenuItem::new("Waiting for X1 Mk1…", None, None)]
+    } else {
+        entries
+            .into_iter()
+            .map(|(name, connected)| {
+                MenuItem::new(
+                    format!("{} {}", if *connected { "🟢" } else { "🔴" }, name),
+                    None,
+                    None,
+                )
+            })
+            .collect()
+    };
+
+    // Always rebuild Quit on USB status updates; otherwise it would disappear.
+    items.push(MenuItem::new(
+        "Quit TraktorX1Legacy",
+        Some(Box::new(|| {
+            eprintln!("[app] Quit from menu bar");
+            std::process::exit(0);
+        })),
+        None,
+    ));
+    Menu::new(items)
 }
 
 fn load_config() -> Result<YamlConfig, String> {

@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.1.2 — 2026-10-19
+
+- Restored detailed, user-selected X1/LP app artwork from the actual image rather than an approximate SVG.
+- Generated unique AppIcon-v012.icns to reduce icon cache conflicts with older releases.
+- Added persistent **Quit TraktorX1Legacy** command in menu bar.
+- Added ZIP extraction and executable smoke tests in CI.
+- Kept the working USB/MIDI logic and FX button mapping unchanged.
+
+
 ## v0.1.1 — 2026-10-17
 
 - Rebuilt the macOS app icon with sharp vector geometry, without Gaussian blur filters.
